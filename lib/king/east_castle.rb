@@ -1,4 +1,5 @@
 require 'piece'
+require 'threat'
 
 class King < Piece
   class EastCastle
