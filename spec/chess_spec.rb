@@ -191,7 +191,6 @@ describe "Acceptance" do
           end)
         end
 
-        #what if the rook moves?
         it "black king cannot castle after it has moved" do
           board = Board.new
           king = King.new(Board::BLACK)
@@ -200,6 +199,23 @@ describe "Acceptance" do
           board.place(Position.new(0, 7), rook)
           board = board.move(Position.new(0,4), Position.new(1,4))
           board = board.move(Position.new(1,4), Position.new(0,4))
+
+          accessible_boards = king.moves(board)
+
+          expect(accessible_boards).not_to include(an_object_satisfying do |potential_board|
+            potential_board.piece_at(Position.new(0, 6)) == king
+            potential_board.piece_at(Position.new(0, 5)) == rook
+          end)
+        end
+
+        it "black king cannot castle after its rook has moved" do
+          board = Board.new
+          king = King.new(Board::BLACK)
+          rook = Rook.new(Board::BLACK)
+          board.place(Position.new(0, 4), king)
+          board.place(Position.new(0, 7), rook)
+          board = board.move(Position.new(0,7), Position.new(1,7))
+          board = board.move(Position.new(1,7), Position.new(0,7))
 
           accessible_boards = king.moves(board)
 

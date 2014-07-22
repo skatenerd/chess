@@ -21,7 +21,8 @@ class King < Piece
         && king_in_required_position(row) \
         && empty_castle_path(row) \
         && safe_castle_path(row) \
-        && king_has_not_moved
+        && king_has_not_moved \
+        && rook_has_not_moved(row)
 
       if legal_castle
         return [execute_castle(row)]
@@ -38,6 +39,11 @@ class King < Piece
 
     def king_has_not_moved()
       !board.moved_pieces.include?(king)
+    end
+
+    def rook_has_not_moved(row)
+      rook = board.piece_at(required_rook_position(row))
+      !board.moved_pieces.include?(rook)
     end
 
     def safe_castle_path(row)
