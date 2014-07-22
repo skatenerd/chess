@@ -1,5 +1,5 @@
 require 'piece'
-require 'king/east_castle'
+require 'king/castle'
 
 class King < Piece
   def moves(board)
