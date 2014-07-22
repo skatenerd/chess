@@ -241,7 +241,7 @@ describe "Acceptance" do
           expect(accessible_boards.count).to eq(6)
         end
 
-        xit "white king can castle on the left side" do
+        it "white king can castle on the left side" do
           board = Board.new
           king = King.new(Board::WHITE)
           rook = Rook.new(Board::WHITE)

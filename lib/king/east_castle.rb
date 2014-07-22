@@ -3,10 +3,6 @@ require 'threat'
 
 class King < Piece
   class Castle
-
-  end
-
-  class EastCastle < Castle
     def initialize(king, board)
       @king = king
       @board = board
@@ -67,20 +63,8 @@ class King < Piece
       board.piece_at(required_rook_position).castles_with_king(king)
     end
 
-    def required_rook_position
-      Position.new(row, 7)
-    end
-
     def required_king_position
       Position.new(row, 4)
-    end
-
-    def destination_rook_position
-      new_rook_position = Position.new(row,5)
-    end
-
-    def destination_king_position
-      new_king_position = Position.new(row,6)
     end
 
     def king_position
@@ -92,6 +76,34 @@ class King < Piece
       ((low + 1)...high).map do |col|
         Position.new(row, col)
       end
+    end
+  end
+
+  class EastCastle < Castle
+    def required_rook_position
+      Position.new(row, 7)
+    end
+
+    def destination_rook_position
+      new_rook_position = Position.new(row,5)
+    end
+
+    def destination_king_position
+      new_king_position = Position.new(row,6)
+    end
+  end
+
+  class WestCastle < Castle
+    def required_rook_position
+      Position.new(row, 0)
+    end
+
+    def destination_rook_position
+      new_rook_position = Position.new(row,3)
+    end
+
+    def destination_king_position
+      new_king_position = Position.new(row,2)
     end
   end
 end

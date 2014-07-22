@@ -17,7 +17,7 @@ class King < Piece
       board.move(current_position, position)
     end
 
-    vanilla_moves + EastCastle.new(self, board).possible_castles
+    vanilla_moves + EastCastle.new(self, board).possible_castles + WestCastle.new(self, board).possible_castles
   end
 
   private
