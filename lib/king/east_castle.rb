@@ -2,84 +2,93 @@ require 'piece'
 require 'threat'
 
 class King < Piece
-  class EastCastle
+  class Castle
+
+  end
+
+  class EastCastle < Castle
     def initialize(king, board)
       @king = king
       @board = board
     end
 
     def possible_castles
-      castle_at_row(7) + castle_at_row(0)
+      legal_castle = rook_in_required_position \
+        && king_in_required_position \
+        && empty_castle_path \
+        && safe_castle_path \
+        && king_has_not_moved \
+        && rook_has_not_moved
+
+      if legal_castle
+        return [execute_castle]
+      end
+      []
     end
 
     private
 
     attr_reader :board, :king
 
-    def castle_at_row(row)
-      legal_castle = rook_in_required_position(row) \
-        && king_in_required_position(row) \
-        && empty_castle_path(row) \
-        && safe_castle_path(row) \
-        && king_has_not_moved \
-        && rook_has_not_moved(row)
-
-      if legal_castle
-        return [execute_castle(row)]
-      end
-      []
+    def row
+      king_position.row
     end
 
-    def execute_castle(row)
-      new_king_position = Position.new(row,6)
-      new_rook_position = Position.new(row,5)
-
-      board.move(king_position, new_king_position).move(required_rook_position(row), new_rook_position)
+    def execute_castle
+      board.move(king_position, destination_king_position).move(required_rook_position, destination_rook_position)
     end
 
-    def king_has_not_moved()
+    def king_has_not_moved
       !board.moved_pieces.include?(king)
     end
 
-    def rook_has_not_moved(row)
-      rook = board.piece_at(required_rook_position(row))
+    def rook_has_not_moved
+      rook = board.piece_at(required_rook_position)
       !board.moved_pieces.include?(rook)
     end
 
-    def safe_castle_path(row)
-      between_spaces = castle_path(row)
+    def safe_castle_path
+      between_spaces = castle_path
       safe_travel = between_spaces.none? do |position|
         Threat.for_square(king, position, board)
       end
     end
 
-    def empty_castle_path(row)
-      between_spaces = castle_path(row)
+    def empty_castle_path
+      between_spaces = castle_path
       board.squares_all_empty?(between_spaces)
     end
 
-    def king_in_required_position(row)
-      king_position == required_king_position(row)
+    def king_in_required_position
+      king_position == required_king_position
     end
 
-    def rook_in_required_position(row)
-      board.piece_at(required_rook_position(row)).castles_with_king(king)
+    def rook_in_required_position
+      board.piece_at(required_rook_position).castles_with_king(king)
     end
 
-    def required_rook_position(row)
+    def required_rook_position
       Position.new(row, 7)
     end
 
-    def required_king_position(row)
+    def required_king_position
       Position.new(row, 4)
+    end
+
+    def destination_rook_position
+      new_rook_position = Position.new(row,5)
+    end
+
+    def destination_king_position
+      new_king_position = Position.new(row,6)
     end
 
     def king_position
       board.position_of(king)
     end
 
-    def castle_path(row)
-      low, high = [required_king_position(row).col, required_rook_position(row).col].sort
+    def castle_path
+      low, high = [required_king_position.col, required_rook_position.col].sort
       ((low + 1)...high).map do |col|
         Position.new(row, col)
       end

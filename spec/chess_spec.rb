@@ -240,6 +240,21 @@ describe "Acceptance" do
           end)
           expect(accessible_boards.count).to eq(6)
         end
+
+        xit "white king can castle on the left side" do
+          board = Board.new
+          king = King.new(Board::WHITE)
+          rook = Rook.new(Board::WHITE)
+          board.place(Position.new(7, 4), king)
+          board.place(Position.new(7, 0), rook)
+
+          accessible_boards = king.moves(board)
+
+          expect(accessible_boards).to include(an_object_satisfying do |potential_board|
+            potential_board.piece_at(Position.new(7, 2)) == king
+            potential_board.piece_at(Position.new(7, 3)) == rook
+          end)
+        end
       end
     end
   end
